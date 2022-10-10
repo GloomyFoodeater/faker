@@ -3,6 +3,8 @@
 public interface IValueGenerator
 {
     object Generate(Type typeToGenerate, GeneratorContext context);
-
-    bool CanGenerate(Type type);
+    
+    bool CanGenerate(Type type) => type == GetGeneratedType();
+    
+    Type GetGeneratedType();
 }
