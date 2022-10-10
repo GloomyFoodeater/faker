@@ -116,10 +116,4 @@ public class FakerTests
         Assert.NotNull(first.Second!.Third);
         Assert.NotNull(first.Second!.Third!.First);
     }
-
-    [Fact]
-    public void ConfigTest()
-    {
-        throw new NotImplementedException();
-    }
 }
