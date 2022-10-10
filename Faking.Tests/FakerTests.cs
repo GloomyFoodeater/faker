@@ -36,7 +36,18 @@ public class FakerTests
     [Fact]
     public void DateTimeTest()
     {
-        throw new NotImplementedException();
+        // Arrange
+        Faker faker = new();
+        var dateTimes = new DateTime[N];
+
+        // Act
+        for (int i = 0; i < N; i++)
+        {
+            dateTimes[i] = faker.Create<DateTime>();
+        }
+
+        // Assert
+        Assert.True(dateTimes.Distinct().Count() >= M);
     }
     
     [Fact]
