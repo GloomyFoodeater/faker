@@ -27,9 +27,9 @@ public class PrivateCtorClass
 
     public double DoubleProperty { get; set; }
 
-    public string? StringField;
+    public string StringField;
 
-    public DateTime? DateTimeField;
+    public DateTime DateTimeField;
 
     public override bool Equals(object? obj)
     {
@@ -38,8 +38,8 @@ public class PrivateCtorClass
 
         return IntProperty == other.IntProperty &&
                Math.Abs(DoubleProperty - other.DoubleProperty) < 0.0001 &&
-               (StringField is null && other.StringField is null || StringField == other.StringField) &&
-               (DateTimeField is null && other.DateTimeField is null || DateTimeField.Equals(other.DateTimeField));
+               StringField == other.StringField &&
+               DateTimeField.Equals(other.DateTimeField);
     }
 
     public override int GetHashCode() => _id;

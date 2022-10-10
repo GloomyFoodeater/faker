@@ -75,22 +75,20 @@ public class FakerTests
     {
         // Arrange
         Faker faker = new();
-        var defaultCtorObjects = new DefaultCtorClass[N];
-        var privateCtorObjects = new PrivateCtorClass[N];
+        var defaultCtorObjects = new DefaultCtorClass[N]; ;
         var multipleCtorStructs = new MultipleCtorStruct[N];
 
         // Act
         for (int i = 0; i < N; i++)
         {
             defaultCtorObjects[i] = faker.Create<DefaultCtorClass>();
-            privateCtorObjects[i] = faker.Create<PrivateCtorClass>();
             multipleCtorStructs[i] = faker.Create<MultipleCtorStruct>();
         }
-
+        
         // Assert
         Assert.True(defaultCtorObjects.Distinct().Count() >= M);
-        Assert.True(privateCtorObjects.Distinct().Count() >= M);
         Assert.True(multipleCtorStructs.Distinct().Count() >= M);
+        Assert.Throws<FakerException>(()=>faker.Create<PrivateCtorClass>());
     }
 
     [Fact]
