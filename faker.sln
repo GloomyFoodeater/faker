@@ -1,5 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32901.215
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faking.Example", "Faking.Example\Faking.Example.csproj", "{D655E509-CCE1-4D7F-8BD3-705DF3F7C0BF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faking.Core", "Faking.Core\Faking.Core.csproj", "{8D4DAF40-ECF2-466E-AC37-174D672EAF2D}"
@@ -24,5 +27,11 @@ Global
 		{5A357668-91F5-4CC3-BD7B-3B0126155C91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A357668-91F5-4CC3-BD7B-3B0126155C91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A357668-91F5-4CC3-BD7B-3B0126155C91}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {06A858F6-395A-414B-86AE-3A337787BD42}
 	EndGlobalSection
 EndGlobal
