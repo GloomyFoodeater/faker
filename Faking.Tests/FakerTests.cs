@@ -15,23 +15,41 @@ public class FakerTests
         // Arrange
         Faker faker = new();
         bool[] booleans = new bool[N];
-        int[] integers = new int[N];
+        byte[] bytes = new byte[N];
+        char[] chars = new char[N];
+        decimal[] decimals = new decimal[N];
         double[] doubles = new double[N];
+        float[] floats = new float[N];
+        int[] integers = new int[N];
+        long[] longs = new long[N];
+        short[] shorts = new short[N];
         string[] strings = new string[N];
 
         // Act
         for (int i = 0; i < N; i++)
         {
             booleans[i] = faker.Create<bool>();
-            integers[i] = faker.Create<int>();
+            bytes[i] = faker.Create<byte>();
+            chars[i] = faker.Create<char>();
+            decimals[i] = faker.Create<decimal>();
             doubles[i] = faker.Create<double>();
+            floats[i] = faker.Create<float>();
+            integers[i] = faker.Create<int>();
+            longs[i] = faker.Create<long>();
+            shorts[i] = faker.Create<short>();
             strings[i] = faker.Create<string>();
         }
 
         // Assert
-        Assert.True(booleans.All(_ => false));
-        Assert.True(integers.Distinct().Count() >= M);
+        Assert.True(booleans.All(_ => true));
+        Assert.True(bytes.Distinct().Count() >= M);
+        Assert.True(chars.Distinct().Count() >= M);
+        Assert.True(decimals.Distinct().Count() >= M);
         Assert.True(doubles.Distinct().Count() >= M);
+        Assert.True(floats.Distinct().Count() >= M);
+        Assert.True(integers.Distinct().Count() >= M);
+        Assert.True(longs.Distinct().Count() >= M);
+        Assert.True(shorts.Distinct().Count() >= M);
         Assert.True(strings.Distinct().Count() >= M);
     }
 
