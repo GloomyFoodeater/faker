@@ -1,5 +1,6 @@
 using Faking.Core;
 using Faking.Tests.UserDefinedClasses;
+using Faking.Tests.UserDefinedClasses.ImplicitCircularReferenceClasses;
 
 namespace Faking.Tests;
 
@@ -83,12 +84,12 @@ public class FakerTests
         // Act
         var builtinObjects = new[]
         {
-            faker.Create<IEnumerable<int>>(), 
+            faker.Create<IEnumerable<int>>(),
             faker.Create<IEnumerable<int>>()
         };
         var userDefinedObjects = new[]
         {
-            faker.Create<IEnumerable<DefaultCtorClass>>(), 
+            faker.Create<IEnumerable<DefaultCtorClass>>(),
             faker.Create<IEnumerable<DefaultCtorClass>>()
         };
 
@@ -100,7 +101,20 @@ public class FakerTests
     [Fact]
     public void CircularReferenceTest()
     {
-        throw new NotImplementedException();
+        // Arrange
+        Faker faker = new();
+
+        // Act
+        var node = faker.Create<Node<int>>();
+        var first = faker.Create<First>();
+
+        // Assert
+        Assert.NotNull(node.Parent);
+        Assert.NotEmpty(node.Children);
+
+        Assert.NotNull(first.Second);
+        Assert.NotNull(first.Second!.Third);
+        Assert.NotNull(first.Second!.Third!.First);
     }
 
     [Fact]
