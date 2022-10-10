@@ -7,4 +7,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Faking.Tests\Faking.Tests.csproj" />
+    </ItemGroup>
+
 </Project>
