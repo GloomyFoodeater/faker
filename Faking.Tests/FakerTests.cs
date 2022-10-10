@@ -1,4 +1,5 @@
 using Faking.Core;
+using Faking.Tests.UserDefinedClasses;
 
 namespace Faking.Tests;
 
@@ -6,7 +7,7 @@ public class FakerTests
 {
     const int M = 30; // Min number of unique objects in each collection
     const int N = 50; // Number of test objects in each collection
-    
+
     [Fact]
     public void BuiltinTest()
     {
@@ -49,13 +50,30 @@ public class FakerTests
         // Assert
         Assert.True(dateTimes.Distinct().Count() >= M);
     }
-    
+
     [Fact]
     public void ConstructorTest()
     {
-        throw new NotImplementedException();
+        // Arrange
+        Faker faker = new();
+        var defaultCtorObjects = new DefaultCtorClass[N];
+        var privateCtorObjects = new PrivateCtorClass[N];
+        var multipleCtorStructs = new MultipleCtorStruct[N];
+
+        // Act
+        for (int i = 0; i < N; i++)
+        {
+            defaultCtorObjects[i] = faker.Create<DefaultCtorClass>();
+            privateCtorObjects[i] = faker.Create<PrivateCtorClass>();
+            multipleCtorStructs[i] = faker.Create<MultipleCtorStruct>();
+        }
+
+        // Assert
+        Assert.True(defaultCtorObjects.Distinct().Count() >= M);
+        Assert.True(privateCtorObjects.Distinct().Count() >= M);
+        Assert.True(multipleCtorStructs.Distinct().Count() >= M);
     }
-    
+
     [Fact]
     public void CollectionTest()
     {
