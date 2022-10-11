@@ -3,6 +3,5 @@
 public class IntGenerator : IValueGenerator
 {
     public object Generate(Type typeToGenerate, GeneratorContext context) => context.Random.Next(1, int.MaxValue);
-    
-    public Type GetGeneratedType() => typeof(int);
+    public bool CanGenerate(Type type) => type == typeof(int);
 }

@@ -4,5 +4,5 @@ public class StringGenerator : IValueGenerator
 {
     public object Generate(Type typeToGenerate, GeneratorContext context) => Guid.NewGuid().ToString();
 
-    public Type GetGeneratedType() => typeof(string);
+    public bool CanGenerate(Type type) => type == typeof(string);
 }
