@@ -2,18 +2,18 @@
 
 namespace Faking.Core;
 
-public class Faker: IFaker
+public class Faker : IFaker
 {
     private readonly GeneratorContext _context;
     private readonly List<IValueGenerator> _generators;
     private readonly ObjectMaker _maker;
 
-    
+
     public Faker()
     {
-        _context = new (new Random(), this);
+        _context = new(new Random(), this);
         _maker = new(this);
-        
+
         _generators = new List<IValueGenerator>
         {
             new BoolGenerator(),
@@ -42,11 +42,11 @@ public class Faker: IFaker
 
         // User-defined classes.
         object obj = _maker.MakeObject(type);
-        
+
         return obj;
     }
 
     public static object? GetDefault(Type type) => type.IsValueType ? Activator.CreateInstance(type) : null;
-    
+
     public static object? GetDefault<T>() => default(T);
 }

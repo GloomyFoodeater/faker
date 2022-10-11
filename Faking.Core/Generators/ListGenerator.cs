@@ -17,7 +17,5 @@ public class ListGenerator : IValueGenerator
         return list;
     }
 
-    public Type GetGeneratedType() => typeof(List<>);
-
     public bool CanGenerate(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>);
 }
