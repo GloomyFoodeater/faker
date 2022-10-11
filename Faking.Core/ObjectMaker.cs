@@ -4,13 +4,13 @@ using static Faking.Core.Faker;
 
 namespace Faking.Core;
 
-public class ObjectMaker
+internal class ObjectMaker
 {
-    public ObjectMaker(Faker faker) => _faker = faker;
+    public ObjectMaker(IFaker faker) => _faker = faker;
 
     private readonly IFaker _faker;
     
-    private readonly NestingChecker _nestingChecker = new NestingChecker(2);
+    private readonly NestingChecker _nestingChecker = new (3);
     
     public object MakeObject(Type type)
     {

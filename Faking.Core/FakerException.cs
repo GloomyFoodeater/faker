@@ -2,10 +2,7 @@
 
 public class FakerException: Exception
 {
-    public string Message { get; }
+    public override string Message { get; }
     
-    public FakerException(string message)
-    {
-        Message = message;
-    }
+    public FakerException(string message) => Message = $"FakerException: {message}";
 }

@@ -1,6 +1,6 @@
 ﻿namespace Faking.Core;
 
-public class NestingChecker
+internal class NestingChecker
 {
     public NestingChecker(int maxLevel) => _maxLevel = maxLevel;
     
