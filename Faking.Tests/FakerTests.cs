@@ -1,8 +1,8 @@
 using Faking.Core;
 using Faking.Tests.UserDefinedClasses;
 using Faking.Tests.UserDefinedClasses.ImplicitCircularReferenceClasses;
-
 using static Faking.Core.Faker;
+
 namespace Faking.Tests;
 
 public class FakerTests
@@ -27,8 +27,8 @@ public class FakerTests
 
         // Assert
         Assert.NotEqual(GetDefault<bool>(), @bool);
-        Assert.NotEqual(GetDefault<byte>(),@byte);
-        Assert.NotEqual(GetDefault<char>(),@char);
+        Assert.NotEqual(GetDefault<byte>(), @byte);
+        Assert.NotEqual(GetDefault<char>(), @char);
         Assert.NotEqual(GetDefault<decimal>(), @decimal);
         Assert.NotEqual(GetDefault<double>(), @double);
         Assert.NotEqual(GetDefault<float>(), @float);
@@ -64,19 +64,19 @@ public class FakerTests
 
         // Assert
         Assert.NotEqual(GetDefault<bool?>(), nullable);
-        
+
         Assert.NotEqual(GetDefault<DefaultCtorClass>(), defaultCtorObj);
         Assert.NotEqual(GetDefault<int>(), defaultCtorObj.IntProperty);
         Assert.NotEqual(GetDefault<DateTime>(), defaultCtorObj.DateTimeField);
-        
+
         Assert.NotEqual(GetDefault<MultipleCtorStruct>(), multipleCtorStruct);
         Assert.NotEqual(GetDefault<int>(), multipleCtorStruct.IntProperty);
         Assert.NotEqual(GetDefault<double>(), multipleCtorStruct.DoubleProperty);
         Assert.NotEqual(GetDefault<string>(), multipleCtorStruct.StringField);
         Assert.NotEqual(GetDefault<DateTime>(), multipleCtorStruct.DateTimeField);
         Assert.True(multipleCtorStruct.WasCorrectConstructorCalled());
-        
-        Assert.Throws<FakerException>(()=>faker.Create<PrivateCtorClass>());
+
+        Assert.Throws<FakerException>(() => faker.Create<PrivateCtorClass>());
     }
 
     [Fact]
@@ -92,18 +92,18 @@ public class FakerTests
 
         // Assert
         Assert.NotEmpty(builtinObjects);
-        foreach (var obj in builtinObjects) 
+        foreach (var obj in builtinObjects)
             Assert.NotEqual(GetDefault<int>(), obj);
 
         Assert.NotEmpty(userDefinedObjects);
-        foreach (var obj in userDefinedObjects) 
+        foreach (var obj in userDefinedObjects)
             Assert.NotEqual(GetDefault<DefaultCtorClass>(), obj);
 
         Assert.NotEmpty(multiDimensionalList);
         foreach (var list in multiDimensionalList)
         {
             Assert.NotEmpty(list);
-            foreach (var obj in list) 
+            foreach (var obj in list)
                 Assert.NotEqual(GetDefault<string>(), obj);
         }
     }
@@ -124,5 +124,36 @@ public class FakerTests
 
         Assert.NotNull(first.Second);
         Assert.NotNull(first.Second!.Third);
+    }
+
+    class OnlyMaxGenerator : IValueGenerator
+    {
+        public object Generate(Type typeToGenerate, GeneratorContext context) => int.MaxValue;
+
+        public bool CanGenerate(Type type) => type == typeof(int);
+    }
+
+    class NowTimeGenerator : IValueGenerator
+    {
+        public object Generate(Type typeToGenerate, GeneratorContext context) => DateTime.Now;
+
+        public bool CanGenerate(Type type) => type == typeof(DateTime);
+    }
+    
+    [Fact]
+    public void ConfigTest()
+    {
+        // Arrange
+        FakerConfig config = new FakerConfig();
+        config.Add<DefaultCtorClass, int, OnlyMaxGenerator>(x=>x.IntProperty);
+        config.Add<DefaultCtorClass, DateTime, NowTimeGenerator>(x=>x.DateTimeField);
+        Faker faker = new Faker(config);
+
+        // Act
+        var obj = faker.Create<DefaultCtorClass>();
+
+        // Assert
+        Assert.Equal(int.MaxValue, obj.IntProperty);
+        Assert.Equal(DateTime.Today.Day, obj.DateTimeField.Day);
     }
 }

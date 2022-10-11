@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-
 using static Faking.Core.Faker;
 
 namespace Faking.Core;
@@ -8,29 +7,39 @@ internal class ObjectMaker
 {
     public ObjectMaker(IFaker faker) => _faker = faker;
 
+    public ObjectMaker(IFaker faker, FakerConfig config, GeneratorContext context) : this(faker)
+    {
+        _config = config;
+        _context = context;
+    }
+
     private readonly IFaker _faker;
-    
-    private readonly NestingChecker _nestingChecker = new (3);
-    
+
+    private readonly NestingChecker _nestingChecker = new(3);
+
+    private readonly FakerConfig _config = new();
+
+    private readonly GeneratorContext? _context;
+
     public object MakeObject(Type type)
     {
         object? obj;
         if (!_nestingChecker.IsOverflowed(type))
         {
             _nestingChecker.Put(type);
-            
+
             // Making object
             obj = Create(type);
             FillMembers(type, obj);
-            
+
             _nestingChecker.Remove(type);
         }
         else
             obj = null;
-        
+
         // Outermost call will return non-null, null is returned only inside function.
         // Therefore suppressing without changing signature.
-        return obj!;  
+        return obj!;
     }
 
     private object Create(Type type)
@@ -74,6 +83,12 @@ internal class ObjectMaker
         // Fill all properties and fields if they are not default.
         foreach (var member in dataMembers)
         {
+            IValueGenerator? priorityGenerator = null;
+            if (_config.MembersGenerators.ContainsKey(member))
+            {
+                priorityGenerator = _config.MembersGenerators[member];
+            }
+
             switch (member)
             {
                 case FieldInfo info:
@@ -85,9 +100,23 @@ internal class ObjectMaker
                     object? fieldDefault = GetDefault(typeOfField);
 
                     if (Equals(fieldValue, fieldDefault))
-                        info.SetValue(obj, _faker.Create(typeOfField));
-                    break;
+                    {
+                        if (priorityGenerator != null)
+                        {
+                            try
+                            {
+                                info.SetValue(obj, priorityGenerator.Generate(typeOfField, _context!));
+                            }
+                            catch
+                            {
+                                // Ignore.
+                            }
+                    }
+                    else
+                            info.SetValue(obj, _faker.Create(typeOfField));
+                    }
                 }
+                    break;
                 case PropertyInfo info:
                 {
                     Type typeOfProperty = info.PropertyType;
@@ -97,7 +126,22 @@ internal class ObjectMaker
                     object? propertyDefault = GetDefault(typeOfProperty);
 
                     if (Equals(propertyValue, propertyDefault))
-                        info.SetValue(obj, _faker.Create(typeOfProperty));
+                    {
+                        if (priorityGenerator != null)
+                        {
+                            try
+                            {
+                                info.SetValue(obj, priorityGenerator.Generate(typeOfProperty, _context!));
+                            }
+                            catch
+                            {
+                                // Ignore.
+                            }
+                        }
+                        else
+                            info.SetValue(obj, _faker.Create(typeOfProperty));
+                    }
+
                     break;
                 }
             }

@@ -7,8 +7,7 @@ public class Faker : IFaker
     private readonly GeneratorContext _context;
     private readonly List<IValueGenerator> _generators;
     private readonly ObjectMaker _maker;
-
-
+    
     public Faker()
     {
         _context = new(new Random(), this);
@@ -30,6 +29,8 @@ public class Faker : IFaker
             new StringGenerator()
         };
     }
+
+    public Faker(FakerConfig config) : this() => _maker = new(this, config, _context);
 
     public T Create<T>() => (T)Create(typeof(T));
 
