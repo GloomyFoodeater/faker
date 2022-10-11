@@ -5,21 +5,21 @@ namespace Faking.Core;
 
 internal class ObjectMaker
 {
-    public ObjectMaker(IFaker faker) => _faker = faker;
+    private readonly IFaker _faker;
 
-    public ObjectMaker(IFaker faker, FakerConfig config, GeneratorContext context) : this(faker)
+    private readonly NestingChecker _nestingChecker;
+
+    private readonly FakerConfig? _config;
+
+    private readonly GeneratorContext? _context;
+
+    public ObjectMaker(IFaker faker, FakerConfig? config = null, GeneratorContext? context = null)
     {
+        _faker = faker;
+        _nestingChecker = new NestingChecker(3);
         _config = config;
         _context = context;
     }
-
-    private readonly IFaker _faker;
-
-    private readonly NestingChecker _nestingChecker = new(3);
-
-    private readonly FakerConfig _config = new();
-
-    private readonly GeneratorContext? _context;
 
     public object MakeObject(Type type)
     {
@@ -36,14 +36,14 @@ internal class ObjectMaker
         }
         else
             obj = null;
-        
+
         return obj!;
     }
 
     private object Create(Type type)
     {
         object? obj;
-        
+
         // Get constructors and sort by parameter list length.
         var constructors = type
             .GetConstructors()
@@ -69,12 +69,11 @@ internal class ObjectMaker
                 // Ignore.
             }
         }
-        
+
         // Check for structure with default constructor, since
         // GetConstructors() does not contain such constructor.
         if (type.IsValueType)
         {
-            
             try
             {
                 obj = Activator.CreateInstance(type);
@@ -84,13 +83,14 @@ internal class ObjectMaker
                 // Failed to create object with public constructors.
                 throw new FakerException("Could not find suitable public constructor to create an object");
             }
-            
+
             // Failed to create object with public constructors.
-            if(obj == null)
+            if (obj == null)
                 throw new FakerException("Could not find suitable public constructor to create an object");
         }
         else
             throw new FakerException("Could not find suitable public constructor to create an object");
+
         return obj;
     }
 
@@ -103,7 +103,8 @@ internal class ObjectMaker
         // Fill all properties and fields if they are not default.
         foreach (var member in dataMembers)
         {
-            _config.MembersGenerators.TryGetValue(member, out var priorityGenerator);
+            IValueGenerator? priorityGenerator = null;
+            _config?.MembersGenerators.TryGetValue(member, out priorityGenerator);
 
             try
             {
@@ -141,6 +142,7 @@ internal class ObjectMaker
                             else
                                 info.SetValue(obj, _faker.Create(typeOfProperty));
                         }
+
                         break;
                     }
                 }

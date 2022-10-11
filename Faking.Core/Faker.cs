@@ -5,13 +5,15 @@ namespace Faking.Core;
 public class Faker : IFaker
 {
     private readonly GeneratorContext _context;
-    private readonly List<IValueGenerator> _generators;
+
     private readonly ObjectMaker _maker;
-    
-    public Faker()
+
+    private readonly List<IValueGenerator> _generators;
+
+    public Faker(FakerConfig? config = null)
     {
         _context = new(new Random(), this);
-        _maker = new(this);
+        _maker = new ObjectMaker(this, config, _context);
 
         _generators = new List<IValueGenerator>
         {
@@ -29,8 +31,6 @@ public class Faker : IFaker
             new StringGenerator()
         };
     }
-
-    public Faker(FakerConfig config) : this() => _maker = new(this, config, _context);
 
     public T Create<T>() => (T)Create(typeof(T));
 
