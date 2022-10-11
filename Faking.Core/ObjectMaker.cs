@@ -54,7 +54,7 @@ public class ObjectMaker
     {
         // Get metadata of property and field members of given type.
         var dataMembers = type.GetMembers()
-            .Where(m => (m.MemberType & MemberTypes.Field & MemberTypes.Property) != 0);
+            .Where(m => (m.MemberType & (MemberTypes.Field | MemberTypes.Property)) != 0);
 
         // Fill all properties and fields if they are not default.
         foreach (var member in dataMembers)
