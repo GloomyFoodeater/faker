@@ -1,4 +1,6 @@
-﻿namespace Faking.Core;
+﻿using Faking.Core.Generators;
+
+namespace Faking.Core;
 
 public class Faker: IFaker
 {
@@ -9,24 +11,24 @@ public class Faker: IFaker
     
     public Faker()
     {
-        _context = new GeneratorContext(new Random(), this);
-        _generators = new List<IValueGenerator>();
+        _context = new (new Random(), this);
         _maker = new(this);
-
-        // Get all types which implement IValueGenerator.
-        var types = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(t => t.GetTypes())
-            .Where(t => t
-                .GetInterfaces()
-                .Contains(typeof(IValueGenerator)));
         
-        // Instantiate all generator implementations inside assembly.
-        foreach (var type in types)
+        _generators = new List<IValueGenerator>
         {
-            IValueGenerator? generator = (IValueGenerator?)Activator.CreateInstance(type);
-            if (generator != null) 
-                _generators.Add(generator);
-        }
+            new BoolGenerator(),
+            new ByteGenerator(),
+            new CharGenerator(),
+            new DateTimeGenerator(),
+            new DecimalGenerator(),
+            new DoubleGenerator(),
+            new FloatGenerator(),
+            new IntGenerator(),
+            new ListGenerator(),
+            new LongGenerator(),
+            new ShortGenerator(),
+            new StringGenerator()
+        };
     }
 
     public T Create<T>() => (T)Create(typeof(T));
