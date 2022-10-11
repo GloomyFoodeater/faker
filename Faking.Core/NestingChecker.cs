@@ -13,8 +13,8 @@ internal class NestingChecker
     public void Put(Type type)
     {
         // Increment existing or create new pair.
-        if(!_levels.TryAdd(type, 1))
-            _levels[type] = 1;
+        if (!_levels.TryAdd(type, 1))
+            _levels[type]++;
     }
 
     public void Remove(Type type)
