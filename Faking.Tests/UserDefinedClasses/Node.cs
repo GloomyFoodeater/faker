@@ -9,7 +9,7 @@ namespace Faking.Tests.UserDefinedClasses;
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public class Node<T>
 {
-    public Node(T data, Node<T>? parent, IEnumerable<Node<T>> children)
+    public Node(T data, Node<T>? parent, List<Node<T>> children)
     {
         Data = data;
         Parent = parent;
@@ -20,5 +20,5 @@ public class Node<T>
     
     public Node<T>? Parent { get; set; }
     
-    public IEnumerable<Node<T>> Children { get; set; }
+    public List<Node<T>> Children { get; set; }
 }

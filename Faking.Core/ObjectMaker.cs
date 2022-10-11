@@ -7,12 +7,28 @@ public class ObjectMaker
     public ObjectMaker(Faker faker) => _faker = faker;
 
     private readonly IFaker _faker;
-
+    
+    private readonly NestingChecker _nestingChecker = new NestingChecker(2);
+    
     public object MakeObject(Type type)
     {
-        object obj = Create(type);
-        FillMembers(type, obj);
-        return obj;
+        object? obj;
+        if (!_nestingChecker.IsOverflowed(type))
+        {
+            _nestingChecker.Put(type);
+            
+            // Making object
+            obj = Create(type);
+            FillMembers(type, obj);
+            
+            _nestingChecker.Remove(type);
+        }
+        else
+            obj = null;
+        
+        // Outermost call will return non-null, null is returned only inside function.
+        // Therefore suppressing without changing signature.
+        return obj!;  
     }
 
     private object? GetDefault(Type type) => type.IsValueType ? Activator.CreateInstance(type) : null;

@@ -5,6 +5,7 @@ public class Faker: IFaker
     private readonly GeneratorContext _context;
     private readonly List<IValueGenerator> _generators;
     private readonly ObjectMaker _maker;
+
     
     public Faker()
     {
@@ -19,6 +20,7 @@ public class Faker: IFaker
                 .GetInterfaces()
                 .Contains(typeof(IValueGenerator)));
         
+        // Instantiate all generator implementations inside assembly.
         foreach (var type in types)
         {
             IValueGenerator? generator = (IValueGenerator?)Activator.CreateInstance(type);
@@ -38,6 +40,7 @@ public class Faker: IFaker
 
         // User-defined classes.
         object obj = _maker.MakeObject(type);
+        
         return obj;
     }
 
