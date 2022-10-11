@@ -31,8 +31,7 @@ public class ObjectMaker
             {
                 // Create argument list with faker.
                 var arguments = constructor.GetParameters()
-                    .Select(p => p.GetType())
-                    .Select(t => _faker.Create(t))
+                    .Select(p => _faker.Create(p.ParameterType))
                     .ToArray();
 
                 var obj = constructor.Invoke(arguments);

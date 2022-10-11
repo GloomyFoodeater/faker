@@ -24,6 +24,7 @@ public class FakerTests
         long[] longs = new long[N];
         short[] shorts = new short[N];
         string[] strings = new string[N];
+        int?[] nullableInt = new int?[N];
 
         // Act
         for (int i = 0; i < N; i++)
@@ -38,6 +39,7 @@ public class FakerTests
             longs[i] = faker.Create<long>();
             shorts[i] = faker.Create<short>();
             strings[i] = faker.Create<string>();
+            nullableInt[i] = faker.Create<int?>();
         }
 
         // Assert
@@ -51,6 +53,7 @@ public class FakerTests
         Assert.True(longs.Distinct().Count() >= M);
         Assert.True(shorts.Distinct().Count() >= M);
         Assert.True(strings.Distinct().Count() >= M);
+        Assert.True(nullableInt.Distinct().Count() >= M);
     }
 
     [Fact]
