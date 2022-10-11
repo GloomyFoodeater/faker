@@ -44,4 +44,7 @@ public class Faker: IFaker
         return obj;
     }
 
+    public static object? GetDefault(Type type) => type.IsValueType ? Activator.CreateInstance(type) : null;
+    
+    public static object? GetDefault<T>() => default(T);
 }

@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 
+using static Faking.Core.Faker;
+
 namespace Faking.Core;
 
 public class ObjectMaker
@@ -30,8 +32,6 @@ public class ObjectMaker
         // Therefore suppressing without changing signature.
         return obj!;  
     }
-
-    private object? GetDefault(Type type) => type.IsValueType ? Activator.CreateInstance(type) : null;
 
     private object Create(Type type)
     {

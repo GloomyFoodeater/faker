@@ -7,12 +7,13 @@ namespace Faking.Tests.UserDefinedClasses;
 [SuppressMessage("ReSharper", "UnassignedField.Global")]
 [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public class MultipleCtorStruct
 {
+#pragma warning disable CS8618
     public MultipleCtorStruct()
+#pragma warning restore CS8618
     {
-        _id = _objectsCounter;
-        _objectsCounter++;
     }
 
     public MultipleCtorStruct(int intProperty) : this() => IntProperty = intProperty;
@@ -26,12 +27,13 @@ public class MultipleCtorStruct
         this(intProperty, doubleProperty)
     {
         StringField = stringField;
+        _wasCorrectConstructor = true;
     }
 
-    private static int _objectsCounter;
+    private readonly bool _wasCorrectConstructor;
 
-    private readonly int _id;
-
+    public bool WasCorrectConstructorCalled() => _wasCorrectConstructor;
+    
     public int IntProperty { get; set; }
 
     public double DoubleProperty { get; set; }
@@ -39,17 +41,4 @@ public class MultipleCtorStruct
     public string StringField;
 
     public DateTime DateTimeField;
-
-    public override bool Equals(object? obj)
-    {
-        if (obj is null || obj is not DefaultCtorClass other)
-            throw new ArgumentException();
-
-        return IntProperty == other.IntProperty &&
-               Math.Abs(DoubleProperty - other.DoubleProperty) < 0.0001 &&
-               StringField == other.StringField &&
-               DateTimeField.Equals(other.DateTimeField);
-    }
-
-    public override int GetHashCode() => _id;
 }

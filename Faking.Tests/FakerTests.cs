@@ -2,6 +2,7 @@ using Faking.Core;
 using Faking.Tests.UserDefinedClasses;
 using Faking.Tests.UserDefinedClasses.ImplicitCircularReferenceClasses;
 
+using static Faking.Core.Faker;
 namespace Faking.Tests;
 
 public class FakerTests
@@ -14,46 +15,30 @@ public class FakerTests
     {
         // Arrange
         Faker faker = new();
-        bool[] booleans = new bool[N];
-        byte[] bytes = new byte[N];
-        char[] chars = new char[N];
-        decimal[] decimals = new decimal[N];
-        double[] doubles = new double[N];
-        float[] floats = new float[N];
-        int[] integers = new int[N];
-        long[] longs = new long[N];
-        short[] shorts = new short[N];
-        string[] strings = new string[N];
-        int?[] nullableInt = new int?[N];
 
         // Act
-        for (int i = 0; i < N; i++)
-        {
-            booleans[i] = faker.Create<bool>();
-            bytes[i] = faker.Create<byte>();
-            chars[i] = faker.Create<char>();
-            decimals[i] = faker.Create<decimal>();
-            doubles[i] = faker.Create<double>();
-            floats[i] = faker.Create<float>();
-            integers[i] = faker.Create<int>();
-            longs[i] = faker.Create<long>();
-            shorts[i] = faker.Create<short>();
-            strings[i] = faker.Create<string>();
-            nullableInt[i] = faker.Create<int?>();
-        }
+        bool @bool = faker.Create<bool>();
+        byte @byte = faker.Create<byte>();
+        char @char = faker.Create<char>();
+        decimal @decimal = faker.Create<decimal>();
+        double @double = faker.Create<double>();
+        float @float = faker.Create<float>();
+        int @int = faker.Create<int>();
+        long @long = faker.Create<long>();
+        short @short = faker.Create<short>();
+        string @string = faker.Create<string>();
 
         // Assert
-        Assert.True(booleans.All(_ => true));
-        Assert.True(bytes.Distinct().Count() >= M);
-        Assert.True(chars.Distinct().Count() >= M);
-        Assert.True(decimals.Distinct().Count() >= M);
-        Assert.True(doubles.Distinct().Count() >= M);
-        Assert.True(floats.Distinct().Count() >= M);
-        Assert.True(integers.Distinct().Count() >= M);
-        Assert.True(longs.Distinct().Count() >= M);
-        Assert.True(shorts.Distinct().Count() >= M);
-        Assert.True(strings.Distinct().Count() >= M);
-        Assert.True(nullableInt.Distinct().Count() >= M);
+        Assert.NotEqual(GetDefault<bool>(), @bool);
+        Assert.NotEqual(GetDefault<byte>(),@byte);
+        Assert.NotEqual(GetDefault<char>(),@char);
+        Assert.NotEqual(GetDefault<decimal>(), @decimal);
+        Assert.NotEqual(GetDefault<double>(), @double);
+        Assert.NotEqual(GetDefault<float>(), @float);
+        Assert.NotEqual(GetDefault<int>(), @int);
+        Assert.NotEqual(GetDefault<long>(), @long);
+        Assert.NotEqual(GetDefault<short>(), @short);
+        Assert.NotEqual(GetDefault<string>(), @string);
     }
 
     [Fact]
@@ -61,16 +46,12 @@ public class FakerTests
     {
         // Arrange
         Faker faker = new();
-        var dateTimes = new DateTime[N];
 
         // Act
-        for (int i = 0; i < N; i++)
-        {
-            dateTimes[i] = faker.Create<DateTime>();
-        }
+        DateTime dateTime = faker.Create<DateTime>();
 
         // Assert
-        Assert.True(dateTimes.Distinct().Count() >= M);
+        Assert.NotEqual(GetDefault<DateTime>(), dateTime);
     }
 
     [Fact]
@@ -78,19 +59,23 @@ public class FakerTests
     {
         // Arrange
         Faker faker = new();
-        var defaultCtorObjects = new DefaultCtorClass[N]; ;
-        var multipleCtorStructs = new MultipleCtorStruct[N];
 
         // Act
-        for (int i = 0; i < N; i++)
-        {
-            defaultCtorObjects[i] = faker.Create<DefaultCtorClass>();
-            multipleCtorStructs[i] = faker.Create<MultipleCtorStruct>();
-        }
+        var defaultCtorObj = faker.Create<DefaultCtorClass>();
+        var multipleCtorStruct = faker.Create<MultipleCtorStruct>();
         
         // Assert
-        Assert.True(defaultCtorObjects.Distinct().Count() >= M);
-        Assert.True(multipleCtorStructs.Distinct().Count() >= M);
+        Assert.NotEqual(GetDefault<DefaultCtorClass>(), defaultCtorObj);
+        Assert.NotEqual(GetDefault<int>(), defaultCtorObj.IntProperty);
+        Assert.NotEqual(GetDefault<DateTime>(), defaultCtorObj.DateTimeField);
+        
+        Assert.NotEqual(GetDefault<MultipleCtorStruct>(), multipleCtorStruct);
+        Assert.NotEqual(GetDefault<int>(), multipleCtorStruct.IntProperty);
+        Assert.NotEqual(GetDefault<double>(), multipleCtorStruct.DoubleProperty);
+        Assert.NotEqual(GetDefault<string>(), multipleCtorStruct.StringField);
+        Assert.NotEqual(GetDefault<DateTime>(), multipleCtorStruct.DateTimeField);
+        Assert.True(multipleCtorStruct.WasCorrectConstructorCalled());
+        
         Assert.Throws<FakerException>(()=>faker.Create<PrivateCtorClass>());
     }
 
@@ -107,10 +92,20 @@ public class FakerTests
 
         // Assert
         Assert.NotEmpty(builtinObjects);
+        foreach (var obj in builtinObjects) 
+            Assert.NotEqual(GetDefault<int>(), obj);
+
         Assert.NotEmpty(userDefinedObjects);
+        foreach (var obj in userDefinedObjects) 
+            Assert.NotEqual(GetDefault<DefaultCtorClass>(), obj);
+
         Assert.NotEmpty(multiDimensionalList);
-        foreach (var list in multiDimensionalList) 
+        foreach (var list in multiDimensionalList)
+        {
             Assert.NotEmpty(list);
+            foreach (var obj in list) 
+                Assert.NotEqual(GetDefault<string>(), obj);
+        }
     }
 
     [Fact]
@@ -129,6 +124,5 @@ public class FakerTests
 
         Assert.NotNull(first.Second);
         Assert.NotNull(first.Second!.Third);
-        Assert.NotNull(first.Second!.Third!.First);
     }
 }
