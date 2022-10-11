@@ -98,20 +98,16 @@ public class FakerTests
         Faker faker = new();
 
         // Act
-        var builtinObjects = new[]
-        {
-            faker.Create<IEnumerable<int>>(),
-            faker.Create<IEnumerable<int>>()
-        };
-        var userDefinedObjects = new[]
-        {
-            faker.Create<IEnumerable<DefaultCtorClass>>(),
-            faker.Create<IEnumerable<DefaultCtorClass>>()
-        };
+        var builtinObjects = faker.Create<List<int>>();
+        var userDefinedObjects = faker.Create<List<DefaultCtorClass>>();
+        var multiDimensionalList = faker.Create<List<List<string>>>();
 
         // Assert
-        Assert.True(builtinObjects[0].Intersect(builtinObjects[1]).Distinct().Count() >= M);
-        Assert.True(userDefinedObjects[0].Intersect(userDefinedObjects[1]).Distinct().Count() >= M);
+        Assert.NotEmpty(builtinObjects);
+        Assert.NotEmpty(userDefinedObjects);
+        Assert.NotEmpty(multiDimensionalList);
+        foreach (var list in multiDimensionalList) 
+            Assert.NotEmpty(list);
     }
 
     [Fact]
