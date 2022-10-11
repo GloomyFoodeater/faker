@@ -61,10 +61,13 @@ public class FakerTests
         Faker faker = new();
 
         // Act
+        bool? nullable = faker.Create<bool?>();
         var defaultCtorObj = faker.Create<DefaultCtorClass>();
         var multipleCtorStruct = faker.Create<MultipleCtorStruct>();
-        
+
         // Assert
+        Assert.NotEqual(GetDefault<bool?>(), nullable);
+        
         Assert.NotEqual(GetDefault<DefaultCtorClass>(), defaultCtorObj);
         Assert.NotEqual(GetDefault<int>(), defaultCtorObj.IntProperty);
         Assert.NotEqual(GetDefault<DateTime>(), defaultCtorObj.DateTimeField);
