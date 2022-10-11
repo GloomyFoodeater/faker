@@ -7,9 +7,6 @@ namespace Faking.Tests;
 
 public class FakerTests
 {
-    const int M = 30; // Min number of unique objects in each collection
-    const int N = 50; // Number of test objects in each collection
-
     [Fact]
     public void BuiltinTest()
     {
