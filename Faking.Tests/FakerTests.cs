@@ -1,4 +1,5 @@
 using Faking.Core;
+using Faking.Tests.TestGenerators;
 using Faking.Tests.UserDefinedClasses;
 using Faking.Tests.UserDefinedClasses.ImplicitCircularReferenceClasses;
 using static Faking.Core.Faker;
@@ -89,7 +90,9 @@ public class FakerTests
         var builtinObjects = faker.Create<List<int>>();
         var userDefinedObjects = faker.Create<List<DefaultCtorClass>>();
         var multiDimensionalList = faker.Create<List<List<string>>>();
-
+        
+        
+        
         // Assert
         Assert.NotEmpty(builtinObjects);
         foreach (var obj in builtinObjects)
@@ -126,20 +129,6 @@ public class FakerTests
         Assert.NotNull(first.Second!.Third);
     }
 
-    class OnlyMaxGenerator : IValueGenerator
-    {
-        public object Generate(Type typeToGenerate, GeneratorContext context) => int.MaxValue;
-
-        public bool CanGenerate(Type type) => type == typeof(int);
-    }
-
-    class NowTimeGenerator : IValueGenerator
-    {
-        public object Generate(Type typeToGenerate, GeneratorContext context) => DateTime.Now;
-
-        public bool CanGenerate(Type type) => type == typeof(DateTime);
-    }
-    
     [Fact]
     public void ConfigTest()
     {
@@ -155,5 +144,19 @@ public class FakerTests
         // Assert
         Assert.Equal(int.MaxValue, obj.IntProperty);
         Assert.Equal(DateTime.Today.Day, obj.DateTimeField.Day);
+    }
+
+    [Fact]
+    public void EmptyCtorStructTest()
+    {
+        // Arrange
+        Faker faker = new();
+        
+        // Act
+        var defaultCtorStruct = faker.Create<DefaultCtorStruct>();
+     
+        // Assert
+        Assert.NotEqual(GetDefault<DefaultCtorStruct>(), defaultCtorStruct);
+        Assert.NotEqual(GetDefault<int>(), defaultCtorStruct.Number);
     }
 }

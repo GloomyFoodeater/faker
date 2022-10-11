@@ -36,14 +36,14 @@ internal class ObjectMaker
         }
         else
             obj = null;
-
-        // Outermost call will return non-null, null is returned only inside function.
-        // Therefore suppressing without changing signature.
+        
         return obj!;
     }
 
     private object Create(Type type)
     {
+        object? obj;
+        
         // Get constructors and sort by parameter list length.
         var constructors = type
             .GetConstructors()
@@ -59,7 +59,7 @@ internal class ObjectMaker
                     .Select(p => _faker.Create(p.ParameterType))
                     .ToArray();
 
-                var obj = constructor.Invoke(arguments);
+                obj = constructor.Invoke(arguments);
 
                 // Object was created.
                 return obj;
@@ -69,9 +69,29 @@ internal class ObjectMaker
                 // Ignore.
             }
         }
-
-        // Failed to create object with public constructors.
-        throw new FakerException("Could not find suitable public constructor to create an object");
+        
+        // Check for structure with default constructor, since
+        // GetConstructors() does not contain such constructor.
+        if (type.IsValueType)
+        {
+            
+            try
+            {
+                obj = Activator.CreateInstance(type);
+            }
+            catch (Exception e)
+            {
+                // Failed to create object with public constructors.
+                throw new FakerException("Could not find suitable public constructor to create an object");
+            }
+            
+            // Failed to create object with public constructors.
+            if(obj == null)
+                throw new FakerException("Could not find suitable public constructor to create an object");
+        }
+        else
+            throw new FakerException("Could not find suitable public constructor to create an object");
+        return obj;
     }
 
     private void FillMembers(Type type, object obj)
@@ -111,8 +131,8 @@ internal class ObjectMaker
                             {
                                 // Ignore.
                             }
-                    }
-                    else
+                        }
+                        else
                             info.SetValue(obj, _faker.Create(typeOfField));
                     }
                 }

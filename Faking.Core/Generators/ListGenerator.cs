@@ -9,8 +9,13 @@ public class ListGenerator : IValueGenerator
         int length = context.Random.Next(1, 10);
         var list = (IList?)Activator.CreateInstance(typeToGenerate, length);
         if (list != null)
+        {
+            var genericArgument = typeToGenerate.GetGenericArguments()[0];
             for (int i = 0; i < length; i++)
-                list.Add(context.Faker.Create(typeToGenerate.GetGenericArguments()[0]));
+            {
+                list.Add(context.Faker.Create(genericArgument));
+            }
+        }
         else
             throw new FakerException("Failed to generate list with given type");
 
