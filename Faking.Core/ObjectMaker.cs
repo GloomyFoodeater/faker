@@ -103,67 +103,51 @@ internal class ObjectMaker
         // Fill all properties and fields if they are not default.
         foreach (var member in dataMembers)
         {
-            IValueGenerator? priorityGenerator = null;
-            if (_config.MembersGenerators.ContainsKey(member))
-            {
-                priorityGenerator = _config.MembersGenerators[member];
-            }
+            _config.MembersGenerators.TryGetValue(member, out var priorityGenerator);
 
-            switch (member)
+            try
             {
-                case FieldInfo info:
+                switch (member)
                 {
-                    Type typeOfField = info.FieldType;
-
-                    // Get values to compare.
-                    object? fieldValue = info.GetValue(obj);
-                    object? fieldDefault = GetDefault(typeOfField);
-
-                    if (Equals(fieldValue, fieldDefault))
+                    case FieldInfo info:
                     {
-                        if (priorityGenerator != null)
+                        Type typeOfField = info.FieldType;
+
+                        // Get values to compare.
+                        object? fieldValue = info.GetValue(obj);
+                        object? fieldDefault = GetDefault(typeOfField);
+
+                        if (Equals(fieldValue, fieldDefault))
                         {
-                            try
-                            {
+                            if (priorityGenerator != null)
                                 info.SetValue(obj, priorityGenerator.Generate(typeOfField, _context!));
-                            }
-                            catch
-                            {
-                                // Ignore.
-                            }
+                            else
+                                info.SetValue(obj, _faker.Create(typeOfField));
                         }
-                        else
-                            info.SetValue(obj, _faker.Create(typeOfField));
                     }
-                }
-                    break;
-                case PropertyInfo info:
-                {
-                    Type typeOfProperty = info.PropertyType;
-
-                    // Get values to compare.
-                    object? propertyValue = info.GetValue(obj);
-                    object? propertyDefault = GetDefault(typeOfProperty);
-
-                    if (Equals(propertyValue, propertyDefault))
+                        break;
+                    case PropertyInfo info:
                     {
-                        if (priorityGenerator != null)
-                        {
-                            try
-                            {
-                                info.SetValue(obj, priorityGenerator.Generate(typeOfProperty, _context!));
-                            }
-                            catch
-                            {
-                                // Ignore.
-                            }
-                        }
-                        else
-                            info.SetValue(obj, _faker.Create(typeOfProperty));
-                    }
+                        Type typeOfProperty = info.PropertyType;
 
-                    break;
+                        // Get values to compare.
+                        object? propertyValue = info.GetValue(obj);
+                        object? propertyDefault = GetDefault(typeOfProperty);
+
+                        if (Equals(propertyValue, propertyDefault))
+                        {
+                            if (priorityGenerator != null)
+                                info.SetValue(obj, priorityGenerator.Generate(typeOfProperty, _context!));
+                            else
+                                info.SetValue(obj, _faker.Create(typeOfProperty));
+                        }
+                        break;
+                    }
                 }
+            }
+            catch
+            {
+                // Ignore.
             }
         }
     }
